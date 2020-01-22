@@ -37,7 +37,9 @@ layout: default
 
    * [Presentation Slides](lectures/lecture_4_2/r_exposure_4_2_mapping.html)
    * [.R Script to follow along](lectures/lecture_4_2/r_exposure_4_2_mapping.R) (Save as to download)
-   
+
+## [Post-Assignments](postassignment.html)
+
 ## General R Resources:
 
    * [UW CSSS508](https://clanfear.github.io/CSSS508/): My University of Washington Introduction to R course which forms the basis for this workshop. All content including lecture videos are freely available.
