@@ -2,7 +2,7 @@
 title: "R Exposure 4"
 subtitle: "Part 2: Mapping"
 author: "Chuck Lanfear"
-date: "Jan 24, 2020<br>Updated: `r gsub(' 0', ' ', format(Sys.Date(), format='%b %d, %Y'))`"
+date: "Jan 25, 2020<br>Updated: `r gsub(' 0', ' ', format(Sys.Date(), format='%b %d, %Y'))`"
 output:
   xaringan::moon_reader:
     lib_dir: libs
@@ -16,9 +16,9 @@ output:
 
 ```{r setup, include=FALSE, purl=FALSE}
 options(htmltools.dir.version = FALSE)
+options(width=70)
 knitr::opts_chunk$set(comment = "##")
 ```
-
 
 # This Unit
 
