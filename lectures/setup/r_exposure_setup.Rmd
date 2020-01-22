@@ -1,0 +1,21 @@
+---
+title: "R Exposure Setup"
+author: "Charles C. Lanfear"
+date: "1/22/2020"
+output: html_document
+---
+
+This file contains basic setup for R Exposure 3 & 4.
+
+First of all, you will want to run the code in the following chunk to install the packages we will use.
+
+```{r, eval=FALSE, echo=TRUE}
+if(!requireNamespace("tidyverse")) install.packages("tidyverse")
+if(!requireNamespace("gapminder")) install.packages("gapminder")
+if(!requireNamespace("devtools")) install.packages("devtools")
+if(!requireNamespace("ggmap")) devtools::install_github("dkahle/ggmap", ref = "tidyup")
+```
+
+If you are asked if you want to install packages from source, enter *NO* unless you know you have a compiler installed.
+
+If you are wondering what the above code does, it first checks to see if the package in question is installed, and if not, then installs it. For `ggmap` it must install the most recent version from GitHub which requites the `devtools` package.

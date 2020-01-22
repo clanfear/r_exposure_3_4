@@ -10,6 +10,7 @@ layout: default
 
    * [R and RStudio Installation Instructions](https://clanfear.github.io/CSSS508/docs/installation.html)
    * [Enabling compilation of packages](https://clanfear.github.io/CSSS508/docs/compiling.html)
+   * [Setup for R Exposure](lectures/setup/r_exposure_setup.html)
 
 ## [Pre-Workshop Refresher](https://clanfear.github.io/Intermediate_R_Workshop/)
   * [Watch the video](https://youtu.be/pSWaOOniVBk)
