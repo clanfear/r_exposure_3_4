@@ -3,7 +3,7 @@ layout: default
 ---
 
 # R Exposure 3 & 4 Workshop
-## WInter 2020
+## Winter 2020
 ### University of Washington Tacoma
 
 ## Installation
@@ -15,22 +15,24 @@ layout: default
   * [Watch the video](https://youtu.be/pSWaOOniVBk)
   * [Follow along in the slides](https://clanfear.github.io/Intermediate_R_Workshop/intermediate_r_slides.html)
 
-# Unit 3, Part 1: Loops
+## Unit 3
+### Part 1: Loops
 
    * [Presentation Slides](lectures/lecture_3_1/r_exposure_3_1_loops.html)
    * [.R Script to follow along](lectures/lecture_3_1/r_exposure_3_1_loops.R) (Save as to download)
 
-## Unit 3, Part 2: Vectorization and Functions
+### Part 2: Vectorization and Functions
 
    * [Presentation Slides](lectures/lecture_3_2/r_exposure_3_2_vectorization.html)
    * [.R Script to follow along](lectures/lecture_3_2/r_exposure_3_2_vectorization.R) (Save as to download)
    
-## Unit 4, Part 1: Strings
+## Unit 4
+### Part 1: Strings
 
    * [Presentation Slides](lectures/lecture_4_1/r_exposure_4_1_strings.html)
    * [.R Script to follow along](lectures/lecture_4_1/r_exposure_4_1_strings.R) (Save as to download)
    
-## Unit 4, Part 2: Maps
+### Part 2: Maps
 
    * [Presentation Slides](lectures/lecture_4_2/r_exposure_4_2_mapping.html)
    * [.R Script to follow along](lectures/lecture_4_2/r_exposure_4_2_mapping.R) (Save as to download)
