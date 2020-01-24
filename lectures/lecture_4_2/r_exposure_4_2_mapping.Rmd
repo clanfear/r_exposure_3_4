@@ -605,7 +605,6 @@ Census for variables, then download them and automatically format them as tidy d
 --
 
 This package utilizes the Census API, so you will need to obtain a [Census API key](https://api.census.gov/data/key_signup.html).
-I talk more about APIs in the Social Media Data and Text Mining lecture.
 
 **Application Program Interface (API)**: A type of computer interface that exists as the 
 "native" method of communication between computers, often via http (usable via `httr` package).
@@ -613,6 +612,12 @@ I talk more about APIs in the Social Media Data and Text Mining lecture.
 * APIs make accessing data easy while allowing websites to control access.
 
 See [the developer's GitHub page](https://walkerke.github.io/tidycensus/articles/basic-usage.html) for detailed instructions.
+
+```{r, eval=FALSE, echo=FALSE}
+# If following along, you can install with this
+# Note you'll ALSO need to go get a Census API key above
+install.packages("tidycensus")
+```
 
 ---
 # Key `tidycensus` Functions
@@ -653,14 +658,16 @@ acs_2015_vars[10:18,] %>% print()
 king_county <- get_acs(geography="tract", state="WA", 
                        county="King", geometry = TRUE,
                        variables=c("B02001_001E", 
-                                   "B02009_001E"))
+                                   "B02009_001E"), 
+                       output="wide")
 ```
 
 ```{r, eval=FALSE, purl=FALSE}
 king_county <- get_acs(geography="tract", state="WA", 
                        county="King", geometry = TRUE,
                        variables=c("B02001_001E", 
-                                   "B02009_001E"))
+                                   "B02009_001E"), 
+                       output="wide")
 ```
 
 What do these look like?
@@ -671,35 +678,21 @@ glimpse(king_county)
 ```
 ]
 
-Variable names are in `variables` and values are in `estimate`.
+With `output="wide"`, **estimates** end in `E` and *error margins* in `M`.
 
 ---
 # Processing Data
 
-To get one row per precinct, we want to `spread()`<sup>1</sup> key (`variable`) and value (`estimate`) columns into separate columns for each variable. Then we `mutate()` `Any Black` into a proportion measure.
+We can drop the margins of error, rename the estimates then, `mutate()` into a proportion `Any Black` measure.
 
 ```{r}
-king_county <-  king_county %>% 
-  select(-moe) %>% #<<
-  group_by(GEOID) %>% 
-  spread(variable, estimate) %>% 
-  rename(`Total Population`=B02001_001,
-         `Any Black`=B02009_001) %>%
+king_county <-  king_county %>%
+  select(-ends_with("M")) %>%
+  rename(`Total Population`=B02001_001E,
+         `Any Black`=B02009_001E) %>%
   mutate(`Any Black` = `Any Black` / `Total Population`)
-
+glimpse(king_county)
 ```
-
-.footnote[[1] `pivot_wider()` is currently broken for `sf` objects, so we must spread. I remove the *margin of error* (`moe`) column before spreading.]
-
-
----
-# The Data
-
-.smallish[
-```{r}
-head(king_county, 10)
-```
-]
 
 ---
 # Mapping Code
@@ -789,12 +782,11 @@ pb_state <-
   get_acs(geography = "tract", state = "IL",
           geometry  = TRUE,
           variables = c("B02001_001E", 
-                        "B02009_001E")) %>%
-  select(-moe) %>%
-  group_by(GEOID) %>% 
-  spread(variable, estimate) %>% 
-  rename(`Total Population` = B02001_001,
-         `Any Black` = B02009_001) %>%
+                        "B02009_001E"),
+          output = "wide") %>%
+  select(-ends_with("M")) %>%
+  rename(`Total Population`=B02001_001E,
+         `Any Black`=B02009_001E) %>%
   mutate(`Any Black` = `Any Black` / `Total Population`)
 ```
 
@@ -803,12 +795,11 @@ pb_state <-
   get_acs(geography = "tract", state = "IL",
           geometry  = TRUE,
           variables = c("B02001_001E", 
-                        "B02009_001E")) %>%
-  select(-moe) %>%
-  group_by(GEOID) %>% 
-  spread(variable, estimate) %>% 
-  rename(`Total Population` = B02001_001,
-         `Any Black` = B02009_001) %>%
+                        "B02009_001E"),
+          output = "wide") %>%
+  select(-ends_with("M")) %>%
+  rename(`Total Population`=B02001_001E,
+         `Any Black`=B02009_001E) %>%
   mutate(`Any Black` = `Any Black` / `Total Population`)
 ```
 

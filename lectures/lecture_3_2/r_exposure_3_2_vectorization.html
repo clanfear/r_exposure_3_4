@@ -13,7 +13,7 @@ class: center, top, title-slide
 # R Exposure 3
 ## Part 2: Vectorization and Functions
 ### Chuck Lanfear
-### Jan 25, 2020<br>Updated: Jan 22, 2020
+### Jan 25, 2020<br>Updated: Jan 24, 2020
 
 ---
 
@@ -257,7 +257,7 @@ smarter_first_and_last
 ##         return(c("first" = first, "last" = last))        
 ##     }
 ## }
-## &lt;bytecode: 0x0000000018eb46b0&gt;
+## &lt;bytecode: 0x00000000185c4128&gt;
 ```
 
 You can also put your cursor over a function in your syntax and hit `F2`.
@@ -310,9 +310,9 @@ quantile_report(rnorm(10000))
 
 ```
 ##   Bottom 1%   Bottom 5%  Bottom 10%  Bottom 25%      Median 
-## -2.34498857 -1.64604603 -1.29574478 -0.67054708  0.01594042 
+## -2.31586918 -1.65752912 -1.29030773 -0.68518617 -0.01484216 
 ##     Top 25%     Top 10%      Top 5%      Top 1% 
-##  0.68246694  1.26195378  1.60903778  2.34018744
+##  0.65376781  1.27887445  1.64179903  2.31153351
 ```
 ]
 
@@ -354,9 +354,9 @@ lapply(swiss, FUN = quantile_report)
 ]
 
 ---
-#  `sapply()`: Simple `lapply()` 
+## `sapply()`: Simplified `lapply()` 
 
-A downside to `lapply()` is that lists are hard to work with. `sapply()` **s**implifies the output by making each element a column in a matrix... usually:
+A downside to `lapply()` is that lists are complicated. `sapply()` **s**implifies output by into a matrix or vector:
 
 .small[
 
@@ -427,6 +427,7 @@ apply(swiss, MARGIN = 2, FUN = quantile_report)
 
 Remember the loop for loading data files from last unit?
 
+.smallish[
 
 ```r
 library(dplyr); library(readr)
@@ -450,6 +451,7 @@ head(complete_data, 3)
 ## 2    49  2.17  0.346
 ## 3    50 -0.122 0.711
 ```
+]
 
 ---
 # Vectorized Data Loading
@@ -472,6 +474,10 @@ head(complete_data, 3)
 ## 3    50 -0.122 0.711
 ```
 
+Most loops can be replaced by a simpler `*apply()` call.
+* No pre-allocation
+* *Usually* much faster
+
 ---
 class: inverse
 # Back to Making functions!
@@ -493,30 +499,45 @@ Maybe you often want to bucket variables in your data into groups based on quant
 ---
 # Bucketing Function
 
-There's already a function in R called `cut()` that does this, but you need to tell it cutpoints or the number of buckets.
+There's already a function in R called `cut()` that does this, but you need to tell it breaks or the number of buckets.
 
-Let's make a convenience function that calls `cut()` using quantiles for splitting and returns an integer:
+Let's make a function that calls `cut()` using quantiles (`quants`) for splitting and returns integers:
 
 
 ```r
-bucket &lt;- function(x, quants = c(0.333, 0.667)) {
+*bucket &lt;- function(x, quants = c(0.333, 0.667)) {
     # set low extreme, quantile points, high extreme
-    new_breaks &lt;- c(min(x)-1, quantile(x, probs = quants), max(x)+1)
+*   new_breaks &lt;- c(min(x)-1, quantile(x, probs = quants), max(x)+1)
     # labels = FALSE will return integer codes instead of ranges
     return(cut(x, breaks = new_breaks, labels = FALSE))
 }
 ```
 
+--
+
+By default this will produce *three buckets*:
+1. Anything below 33.3rd percentile
+2. Anthing from 33.3rd to 66.7th
+3. Anything above 66.7th
+
+--
+
+.pull-right[
+.footnote[
+To capture all high/low values, we start with `min(x)-1` and end with `max(x)+1`.
+]
+]
 ---
 # Trying Out `bucket()`
 
 .smallish[
 
 ```r
-random_data &lt;- rnorm(100)
-bucketed_random_data &lt;- bucket(random_data, 
-                          quants = c(0.05, 0.25, 0.5, 0.75, 0.95))
-plot(x = bucketed_random_data, y = random_data, main = "Buckets and values")
+dat &lt;- rnorm(100)
+dat_quants &lt;- c(0.05, 0.25, 0.5, 0.75, 0.95)
+bucketed_dat &lt;- bucket(dat, quants = dat_quants)
+plot(x = bucketed_dat, y = dat, main = "Buckets and values", pch = 16)
+abline(h = quantile(dat, dat_quants), lty = "dashed", col = "red")
 ```
 
 ![](r_exposure_3_2_vectorization_files/figure-html/unnamed-chunk-18-1.svg)&lt;!-- --&gt;
@@ -525,7 +546,7 @@ plot(x = bucketed_random_data, y = random_data, main = "Buckets and values")
 ---
 # Example: Removing Bad Data
 
-Let's say we have data where impossible values occur:
+Let's say we have data where impossible values occur:&lt;sup&gt;1&lt;/sup&gt;
 
 .smallish[
 
@@ -550,6 +571,8 @@ Let's say we have data where impossible values occur:
 ## 10      j           99.00         99.00
 ```
 ]
+
+.footnote[[1] Different types of missing data are often coded this way in survey and administrative data sets.]
 
 ---
 # Function to Remove Extreme Values
@@ -578,7 +601,7 @@ remove_extremes(school_data$pr_passing_exam, low = 0, high = 1)
 ---
 # `dplyr::mutate_at()`
 
-`dplyr` functions `mutate_at()` and `summarize_at()` take an argument `funs()`. This will apply our function to every variable (besides `school`) to update the columns in `school_data`:
+`dplyr` function `mutate_at()` applies functions to multiple variables at once. We can use this to update every variable (besides `school`) in `school_data`:
 
 .smallish[
 
@@ -604,11 +627,11 @@ school_data %&gt;%
 ]
 
 ---
-# Standard and Non-Standard Evaluation
+# (Non-)Standard  Evaluation
 
 `dplyr` uses what is called **non-standard evaluation** that lets you refer to "naked" variables (no quotes around them) like `school`.
 
-`dplyr` verbs (like `mutate()`) recently started supporting *standard evaluation* allowing you to use quoted object names as well. This makes programming with `dplyr` easier.
+`dplyr` verbs (like `mutate()`) recently started supporting **standard evaluation** allowing you to use quoted object names as well. This makes writing functions and loops with `dplyr` easier.
 
 
 ```r
@@ -624,9 +647,11 @@ swiss %&gt;%
 ```
 
 ---
-# Anonymous Functions in `dplyr`
+# Anonymous `dplyr` Functions
 
-You can skip naming your function in `dplyr` if you won't use it again. Code below will return the mean divided by the standard deviation for each variable in `swiss`:
+You can skip naming your function in `dplyr` if you won't use it again. 
+
+For example, this returns the mean divided by the standard deviation for each variable in `swiss`:
 
 
 ```r
@@ -644,7 +669,7 @@ swiss %&gt;%
 ---
 # Anonymous `lapply()`
 
-Like with `dplyr`, you can use anonymous functions in `lapply()`, but a difference is you'll need to have the `function()` part at the beginning:
+Like with `dplyr`, you can use anonymous functions in `lapply()`&lt;sup&gt;1&lt;/sup&gt;, but a difference is you'll need to have the `function()` part at the beginning:
 
 .smallish[
 
@@ -671,6 +696,11 @@ lapply(swiss, function(x) mean(x, na.rm = TRUE) / sd(x, na.rm = TRUE))
 ## [1] 0.9865478
 ```
 
+.pull-right[
+.footnote[
+[1] Note that `lapply()` produces a list as output. You could instead use `sapply()` to get a vector.
+]
+]
 ---
 # Example: `ggplot2` Templates
 

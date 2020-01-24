@@ -22,11 +22,40 @@ library(ggplot2)
 library(dplyr)
 ```
 
-# Assumptions
+# Overview of the Day
 
-1. You have taken R Exposure 1 & 2 or an equivalent.
+* Part 3, Unit 1
+  + `for()` and `while()` loops
+  + Flow control with `if()` and `else`
 
-2. You remember that content.
+* Part 3, Unit 2
+  + Vectorization
+  + Writing functions
+
+* Part 4, Unit 1
+  + Manipulating strings with `stringr`
+  + Regular expressions
+
+* Part 4, Unit 2
+  + Mapping with `ggplot2` and `ggmap`
+  + `sf` and `tidycensus`
+
+---
+## Assumptions
+
+1. You have up-to-date R and RStudio installations
+
+2. You have taken R Exposure 1 & 2 or an equivalent.<sup>1</sup>
+
+.footnote[
+[1] I do *not* expect you remembered everything.
+]
+
+---
+class:inverse
+# Repetition
+# Repetition
+# Repetition
 
 ---
 # Bad Repetition
@@ -85,19 +114,6 @@ It also *substantially* reduces the time and effort involved in processing large
 --
 
 Lastly, compact code is more readable and easier to troubleshoot.
-
----
-# The Agenda: Programming
-
-**Today:**
-
-* `for()` and `while()` **loop** programming (general methods)
-* Vectorization to *avoid* loops
-
-**Next week:**
-
-* Writing your own **functions**!
-* Looping methods based on functions
 
 ---
 # What is a Loop?

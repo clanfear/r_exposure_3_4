@@ -73,7 +73,7 @@ class: inverse
 ---
 # `nchar()`
 
-We've seen the `nchar()` function to get the number of characters in a string. How many characters are in the ZIP codes?
+`nchar()` gets the number of characters in a string. How many characters are in the ZIP codes?
 
 ```{r nchar_zip}
 restaurants %>% 
@@ -84,7 +84,7 @@ restaurants %>%
 ---
 # `substr()`
 
-You should be familiar with `substr()` from the homeworks. We can use it to pull out just the first 5 digits of the ZIP code.
+`substr()` extracts *sub strings* from a larger string. We can use it to pull out just the first 5 digits of the ZIP code.
 
 ```{r substr}
 restaurants <- restaurants %>%
@@ -120,7 +120,7 @@ paste0(1:5, letters[1:5])
 
 `sep=` controls what happens when doing entry-wise squishing of vectors you give to `paste()`, while `collapse=` controls if/how they go from a vector to a single string.
 
-Here are some examples; make sure you understand how each set of arguments produce their results:
+Here are some examples; make sure you understand how each set of arguments produces its results:
 
 ```{r paste_practice, eval=TRUE, results="hold"}
 paste(letters[1:5], collapse = "!")

@@ -13,18 +13,47 @@ class: center, top, title-slide
 # R Exposure 3
 ## Part 1: Loops
 ### Chuck Lanfear
-### Jan 25, 2020<br>Updated: Jan 22, 2020
+### Jan 25, 2020<br>Updated: Jan 24, 2020
 
 ---
 
 
 
 
-# Assumptions
+# Overview of the Day
 
-1. You have taken R Exposure 1 &amp; 2 or an equivalent.
+* Part 3, Unit 1
+  + `for()` and `while()` loops
+  + Flow control with `if()` and `else`
 
-2. You remember that content.
+* Part 3, Unit 2
+  + Vectorization
+  + Writing functions
+
+* Part 4, Unit 1
+  + Manipulating strings with `stringr`
+  + Regular expressions
+
+* Part 4, Unit 2
+  + Mapping with `ggplot2` and `ggmap`
+  + `sf` and `tidycensus`
+
+---
+## Assumptions
+
+1. You have up-to-date R and RStudio installations
+
+2. You have taken R Exposure 1 &amp; 2 or an equivalent.&lt;sup&gt;1&lt;/sup&gt;
+
+.footnote[
+[1] I do *not* expect you remembered everything.
+]
+
+---
+class:inverse
+# Repetition
+# Repetition
+# Repetition
 
 ---
 # Bad Repetition
@@ -90,19 +119,6 @@ It also *substantially* reduces the time and effort involved in processing large
 --
 
 Lastly, compact code is more readable and easier to troubleshoot.
-
----
-# The Agenda: Programming
-
-**Today:**
-
-* `for()` and `while()` **loop** programming (general methods)
-* Vectorization to *avoid* loops
-
-**Next week:**
-
-* Writing your own **functions**!
-* Looping methods based on functions
 
 ---
 # What is a Loop?
@@ -925,7 +941,7 @@ for(position in 1:length(my_vector)) {
 
 ```
 ##    user  system elapsed 
-##    5.86    0.13    6.00
+##    5.69    0.11    5.81
 ```
 
 ---
@@ -942,7 +958,7 @@ new_vector &lt;- my_vector + 1
 
 ```
 ##    user  system elapsed 
-##    0.19    0.09    0.28
+##    0.21    0.06    0.26
 ```
 
 ```r
@@ -951,10 +967,10 @@ for_time / vec_time
 
 ```
 ##    user  system elapsed 
-##   30.84    1.44   21.43
+##   27.10    1.83   22.35
 ```
 
-The vectorized method was 31 times as fast! Vector/matrix arithmetic is implemented using fast, optimized functions that a `for()` loop can't compete with.
+The vectorized method was 27 times as fast! Vector/matrix arithmetic is implemented using fast, optimized functions that a `for()` loop can't compete with.
 
 ---
 # Vectorization Examples

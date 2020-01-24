@@ -13,7 +13,7 @@ class: center, top, title-slide
 # R Exposure 4
 ## Part 2: Mapping
 ### Chuck Lanfear
-### Jan 25, 2020<br>Updated: Jan 22, 2020
+### Jan 25, 2020<br>Updated: Jan 24, 2020
 
 ---
 
@@ -154,7 +154,7 @@ What this package does for you:
 ---
 # Installation
 
-As of Jan 22, 2020, the current version of `ggmap` must be downloaded from GitHub.
+As of Jan 24, 2020, the current version of `ggmap` must be downloaded from GitHub.
 
 This can be done using the `devtools` package.
 
@@ -595,7 +595,6 @@ Census for variables, then download them and automatically format them as tidy d
 --
 
 This package utilizes the Census API, so you will need to obtain a [Census API key](https://api.census.gov/data/key_signup.html).
-I talk more about APIs in the Social Media Data and Text Mining lecture.
 
 **Application Program Interface (API)**: A type of computer interface that exists as the 
 "native" method of communication between computers, often via http (usable via `httr` package).
@@ -603,6 +602,8 @@ I talk more about APIs in the Social Media Data and Text Mining lecture.
 * APIs make accessing data easy while allowing websites to control access.
 
 See [the developer's GitHub page](https://walkerke.github.io/tidycensus/articles/basic-usage.html) for detailed instructions.
+
+
 
 ---
 # Key `tidycensus` Functions
@@ -660,7 +661,8 @@ acs_2015_vars[10:18,] %&gt;% print()
 king_county &lt;- get_acs(geography="tract", state="WA", 
                        county="King", geometry = TRUE,
                        variables=c("B02001_001E", 
-                                   "B02009_001E"))
+                                   "B02009_001E"), 
+                       output="wide")
 ```
 
 What do these look like?
@@ -672,70 +674,44 @@ glimpse(king_county)
 ```
 
 ```
-## Observations: 796
-## Variables: 6
-## $ GEOID    &lt;chr&gt; "53033000100", "53033000100", "53033000200", "53...
-## $ NAME     &lt;chr&gt; "Census Tract 1, King County, Washington", "Cens...
-## $ variable &lt;chr&gt; "B02001_001", "B02009_001", "B02001_001", "B0200...
-## $ estimate &lt;dbl&gt; 7963, 1550, 7973, 422, 2822, 170, 6721, 1168, 53...
-## $ moe      &lt;dbl&gt; 529, 449, 377, 254, 201, 92, 454, 441, 571, 218,...
-## $ geometry &lt;MULTIPOLYGON [°]&gt; MULTIPOLYGON (((-122.2965 4..., MUL...
+## Observations: 398
+## Variables: 7
+## $ GEOID       &lt;chr&gt; "53033010401", "53033010701", "53033011001", ...
+## $ NAME        &lt;chr&gt; "Census Tract 104.01, King County, Washington...
+## $ B02001_001E &lt;dbl&gt; 4303, 3736, 4697, 6525, 5457, 5084, 4549, 563...
+## $ B02001_001M &lt;dbl&gt; 332, 263, 403, 495, 422, 418, 348, 346, 329, ...
+## $ B02009_001E &lt;dbl&gt; 775, 1286, 1707, 709, 324, 660, 618, 755, 73,...
+## $ B02009_001M &lt;dbl&gt; 234, 253, 400, 189, 107, 216, 195, 268, 63, 8...
+## $ geometry    &lt;MULTIPOLYGON [°]&gt; MULTIPOLYGON (((-122.3031 4..., ...
 ```
 ]
 
-Variable names are in `variables` and values are in `estimate`.
+With `output="wide"`, **estimates** end in `E` and *error margins* in `M`.
 
 ---
 # Processing Data
 
-To get one row per precinct, we want to `spread()`&lt;sup&gt;1&lt;/sup&gt; key (`variable`) and value (`estimate`) columns into separate columns for each variable. Then we `mutate()` `Any Black` into a proportion measure.
+We can drop the margins of error, rename the estimates then, `mutate()` into a proportion `Any Black` measure.
 
 
 ```r
-king_county &lt;-  king_county %&gt;% 
-* select(-moe) %&gt;%
-  group_by(GEOID) %&gt;% 
-  spread(variable, estimate) %&gt;% 
-  rename(`Total Population`=B02001_001,
-         `Any Black`=B02009_001) %&gt;%
+king_county &lt;-  king_county %&gt;%
+  select(-ends_with("M")) %&gt;%
+  rename(`Total Population`=B02001_001E,
+         `Any Black`=B02009_001E) %&gt;%
   mutate(`Any Black` = `Any Black` / `Total Population`)
-```
-
-.footnote[[1] `pivot_wider()` is currently broken for `sf` objects, so we must spread. I remove the *margin of error* (`moe`) column before spreading.]
-
-
----
-# The Data
-
-.smallish[
-
-```r
-head(king_county, 10)
+glimpse(king_county)
 ```
 
 ```
-## Simple feature collection with 10 features and 4 fields
-## geometry type:  MULTIPOLYGON
-## dimension:      XY
-## bbox:           xmin: -122.3799 ymin: 47.69462 xmax: -122.2551 ymax: 47.73416
-## epsg (SRID):    4269
-## proj4string:    +proj=longlat +datum=NAD83 +no_defs
-## # A tibble: 10 x 5
-## # Groups:   GEOID [10]
-##    GEOID  NAME                   geometry `Total Populati~ `Any Black`
-##    &lt;chr&gt;  &lt;chr&gt;        &lt;MULTIPOLYGON [°]&gt;            &lt;dbl&gt;       &lt;dbl&gt;
-##  1 53033~ Cens~ (((-122.2965 47.73378, -~             7963      0.195 
-##  2 53033~ Cens~ (((-122.3236 47.72309, -~             7973      0.0529
-##  3 53033~ Cens~ (((-122.3452 47.73413, -~             2822      0.0602
-##  4 53033~ Cens~ (((-122.3609 47.73414, -~             6721      0.174 
-##  5 53033~ Cens~ (((-122.3609 47.72507, -~             5300      0.0570
-##  6 53033~ Cens~ (((-122.3764 47.71652, -~             3052      0.0131
-##  7 53033~ Cens~ (((-122.345 47.72868, -1~             8061      0.111 
-##  8 53033~ Cens~ (((-122.3127 47.71944, -~             4854      0.142 
-##  9 53033~ Cens~ (((-122.2915 47.7155, -1~             2582      0.0352
-## 10 53033~ Cens~ (((-122.285 47.7192, -12~             1972      0.0152
+## Observations: 398
+## Variables: 5
+## $ GEOID              &lt;chr&gt; "53033010401", "53033010701", "5303301...
+## $ NAME               &lt;chr&gt; "Census Tract 104.01, King County, Was...
+## $ `Total Population` &lt;dbl&gt; 4303, 3736, 4697, 6525, 5457, 5084, 45...
+## $ `Any Black`        &lt;dbl&gt; 0.1801069022, 0.3442184154, 0.36342346...
+## $ geometry           &lt;MULTIPOLYGON [°]&gt; MULTIPOLYGON (((-122.3031...
 ```
-]
 
 ---
 # Mapping Code
@@ -805,12 +781,11 @@ pb_state &lt;-
   get_acs(geography = "tract", state = "IL",
           geometry  = TRUE,
           variables = c("B02001_001E", 
-                        "B02009_001E")) %&gt;%
-  select(-moe) %&gt;%
-  group_by(GEOID) %&gt;% 
-  spread(variable, estimate) %&gt;% 
-  rename(`Total Population` = B02001_001,
-         `Any Black` = B02009_001) %&gt;%
+                        "B02009_001E"),
+          output = "wide") %&gt;%
+  select(-ends_with("M")) %&gt;%
+  rename(`Total Population`=B02001_001E,
+         `Any Black`=B02009_001E) %&gt;%
   mutate(`Any Black` = `Any Black` / `Total Population`)
 ```
 
